@@ -2,7 +2,7 @@
 onmessage = function (messageEvent) {
     importScripts("State.js");
     let state = new State();
-    state.bitBoards = messageEvent.data[0].bitBoards;
+    state.board = messageEvent.data[0].board;
     state.score = messageEvent.data[0].score;
     state.roundNr = messageEvent.data[0].roundNr;
     state.gameOver = messageEvent.data[0].gameOver;

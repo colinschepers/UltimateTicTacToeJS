@@ -4,7 +4,7 @@ function drawSymbols() {
     if (!state) {
         return;
     }
-    if(state.roundNr == 0) {
+    if (state.roundNr === 0) {
         symbols = []
     }
     for (let i = symbols.length; i < state.history.length; i++) {
@@ -27,11 +27,11 @@ class Cross {
     draw() {
         rectMode(CENTER);
         fill(0, 255, 0);
-        
+
         translate(this.x, this.y);
         rotate(this.rotation);
         scale(this.scale);
-        
+
         rotate(0.25 * PI);
         rect(0, 0, symbolSize * crossThickness, symbolSize)
         rotate(0.5 * PI);
@@ -42,7 +42,7 @@ class Cross {
         rotate(-this.rotation);
         translate(-this.x, -this.y);
 
-        this.rotation = min(0.5 * PI, this.rotation + symbolAnimationLength * 0.5 * PI);
+        this.rotation = min(1 * PI, this.rotation + symbolAnimationLength * 1 * PI);
         this.scale = min(1, this.scale + 1 * symbolAnimationLength);
     }
 }
@@ -72,4 +72,3 @@ class Circle {
         this.scale = min(1, this.scale + 1 * symbolAnimationLength);
     }
 }
-

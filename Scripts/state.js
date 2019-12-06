@@ -1,45 +1,42 @@
 class State {
     constructor() {
-        this.bitBoards = [0, 0];
+        this.board = Array(9 * 9).fill(-1);
         this.roundNr = 0;
         this.score = 0.5;
         this.isGameOver = false;
         this.history = [];
-        this.board = [
-            [-1, -1, -1, -1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1, -1, -1, -1]
-        ]
     }
 
     play(move) {
         if (typeof move === 'undefined' || !this.isValid(move)) {
             console.error("Invalid move: " + move);
+            this.isGameOver = true;
+            return;
         }
 
         let player = this.roundNr & 1;
-        this.board[move % 9][Math.floor(move / 9)] = player;
+        this.board[move] = player;
         this.history.push(move);
 
         this.roundNr++;
 
-        if(this.roundNr >= 3) {
+        if (this.roundNr >= 81) {
             this.isGameOver = true;
         }
     }
 
     isValid(move) {
-        return move >= 0 && move < 81 && this.board[move % 9][Math.floor(move / 9)] == -1;
+        return move >= 0 && move < 81 && this.board[move] == -1;
     }
 
     getValidMoves() {
-        return [];
+        const moves = [];
+        for (let i = 0; i < 81; i++) {
+            if (this.board[i] === -1) {
+                moves.push(i);
+            }
+        }
+        return moves;
     }
 
     getPlayerToMove() {
@@ -47,7 +44,11 @@ class State {
     }
 
     get2DBoard() {
-        return this.board;
+        const board2D = Array(9).fill(Array(9));
+        for (let i = 0; i < 81; i++) {
+            board2D[i % 9][Math.floor(i / 9)] = this.board[i];
+        }
+        return board2D;
     }
 
     clone() {
@@ -57,8 +58,9 @@ class State {
     }
 
     copyPosition(state) {
-        this.score = state.score;
+        this.board = state.board.slice();
         this.roundNr = state.roundNr;
+        this.score = state.score;
         this.gameOver = state.gameOver;
         this.history = state.history.slice();
     }

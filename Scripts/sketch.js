@@ -6,14 +6,13 @@ var menuEnabled = true;
 function setup() {
     createCanvas(size, size);
     frameRate(50);
-    newGame();
+    //newGame();
 }
 
 function draw() {
     noStroke();
     background(0);
     checkState();
-    drawStars();
     drawFrame();
     drawSymbols();
     drawMenu();
@@ -22,13 +21,10 @@ function draw() {
 function newGame() {
     state = new State();
     awaitingMove = false;
-
-    console.log(players[0]);
-    console.log(players[1]);
 }
 
 function checkState() {
-    if (!state.isGameOver && !awaitingMove) {
+    if (state && !state.isGameOver && !awaitingMove) {
         getMove();
     }
 }
@@ -40,7 +36,7 @@ function getMove() {
     if (state && player && player.constructor.name != 'HumanPlayer') {
         let startTime = Date.now();
         try {
-            const scriptName = player.constructor.name[0].toUpperCase() +  player.constructor.name.slice(1);
+            const scriptName = player.constructor.name[0].toUpperCase() + player.constructor.name.slice(1);
             const worker = new Worker(`Scripts/${scriptName}.js`);
             worker.onmessage = function (messageEvent) {
                 applyMove(messageEvent.data[0], startTime);
@@ -73,7 +69,7 @@ function mousePressed() {
             let y = Math.floor(mouseY / (height / 9));
             let move = y * 9 + x;
             if (x >= 0 && x < 9 && y >= 0 && y < 9) {
-                if(!state.isValid(move)) {
+                if (!state.isValid(move)) {
                     console.log('Invalid Move!');
                     return;
                 }
