@@ -1,9 +1,3 @@
-const size = 600;
-const barRadius = size / 100;
-const gridSize = size / 9;
-const gridSizeXL = size / 3;
-const moveTimeInMilliseconds = 250;
-
 var players = [new HumanPlayer(), new HumanPlayer()];
 var state = null;
 var awaitingMove = false;
@@ -11,8 +5,7 @@ var menuEnabled = true;
 
 function setup() {
     createCanvas(size, size);
-    //frameRate(25);
-
+    frameRate(50);
     newGame();
 }
 
@@ -24,34 +17,31 @@ function draw() {
     drawFrame();
     drawSymbols();
     drawMenu();
-    //orbitControl();
 }
 
 function newGame() {
     state = new State();
     awaitingMove = false;
-    rotation = 0;
-    menuEnabled = false;
+
+    console.log(players[0]);
+    console.log(players[1]);
 }
 
 function checkState() {
-    if (state && !state.isGameOver) {
-        if (!awaitingMove) {
-            getMove();
-        }
-    } else {
-        gameOver();
+    if (!state.isGameOver && !awaitingMove) {
+        getMove();
     }
 }
 
 function getMove() {
     awaitingMove = true;
 
-    let player = players[state.getPlayerToMove()];
-    if (player && player.constructor.name != 'HumanPlayer') {
+    const player = players[state.getPlayerToMove()];
+    if (state && player && player.constructor.name != 'HumanPlayer') {
         let startTime = Date.now();
         try {
-            const worker = new Worker(`Scripts/${player.constructor.name}.js`);
+            const scriptName = player.constructor.name[0].toUpperCase() +  player.constructor.name.slice(1);
+            const worker = new Worker(`Scripts/${scriptName}.js`);
             worker.onmessage = function (messageEvent) {
                 applyMove(messageEvent.data[0], startTime);
             }
@@ -75,45 +65,23 @@ function applyMove(move, startTime) {
     }, max(0, timeLeft));
 }
 
-function gameOver() {
-    if (false) {
-        // do some winning animation
-    } else if (!menuEnabled) {
-        menuEnabled = true;
-    }
-}
-
-function mouseReleased() {
+function mousePressed() {
     if (state && !state.isGameOver) {
-        var player = players[state.getPlayerToMove()];
-        if (player.constructor.name === 'HumanPlayer') {
+        const player = players[state.getPlayerToMove()];
+        if (player && player.constructor.name === 'HumanPlayer') {
             let x = Math.floor(mouseX / (width / 9));
             let y = Math.floor(mouseY / (height / 9));
             let move = y * 9 + x;
-            if (x >= 0 && x < 9 && y >= 0 && y < 9 && state.isValid(move)) {
+            if (x >= 0 && x < 9 && y >= 0 && y < 9) {
+                if(!state.isValid(move)) {
+                    console.log('Invalid Move!');
+                    return;
+                }
                 state.play(move);
                 awaitingMove = false;
             }
         }
-    } else if (menuEnabled) {
-        let x = Math.floor(mouseX / (width / 3));
-        let y = Math.floor(mouseY / (height / 3));
-        if (x >= 0 && x < 3 && y >= 0 && y < 3) {
-            if (x == 0) {
-                players[0] = new HumanPlayer();
-            } else if (x == 1) {
-                players[0] = new RandomPlayer();
-            } else if (x == 2) {
-                players[0] = new MCTSPlayer(moveTimeInMilliseconds);
-            }
-            if (y == 0) {
-                players[1] = new HumanPlayer();
-            } else if (y == 1) {
-                players[1] = new RandomPlayer();
-            } else if (y == 2) {
-                players[1] = new MCTSPlayer(moveTimeInMilliseconds);
-            }
-            newGame();
-        }
     }
+
+    checkMenuItemsClicked();
 }
