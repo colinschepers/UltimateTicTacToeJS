@@ -25,7 +25,7 @@ class MenuItem {
         textAlign(CENTER, TOP);
         text(this.text, this.x, this.y, this.width, this.height);
 
-        this.transparency = min(200, this.transparency + (200 * menuAnimationLength));
+        this.transparency = min(200, this.transparency + (200 / menuAnimationSpeed));
     }
 }
 

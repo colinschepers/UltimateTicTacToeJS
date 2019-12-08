@@ -1,7 +1,10 @@
 class State {
     constructor() {
-        this.board = Array(9 * 9).fill(-1);
         this.roundNr = 0;
+        this.bitBoards = [Array(10).fill(0), Array(10).fill(0)];
+        this.counts = Array(10).fill(0);
+        this.nextBoardNr = 9;
+        this.drawBitBoard = 0;
         this.score = 0.5;
         this.isGameOver = false;
         this.history = [];
@@ -14,41 +17,133 @@ class State {
             return;
         }
 
-        let player = this.roundNr & 1;
-        this.board[move] = player;
-        this.history.push(move);
+        const player = this.getPlayerToMove();
+        const boardNr = Math.floor(move / 9);
+        const moveNr = move % 9;
+
+        this.bitBoards[player][boardNr] |= State.bitMove[moveNr];
+        this.counts[boardNr]++;
+        this.nextBoardNr = moveNr;
+
+        if (this.__isLine(this.bitBoards[player][boardNr])) {
+            // line on small board
+            this.bitBoards[player][9] |= State.bitMove[boardNr];
+            this.counts[9]++;
+            this.score += player - 0.5;
+
+            if (this.__isLine(this.bitBoards[player][9])) {
+                // line on the large board
+                this.isGameOver = true;
+                this.score = 1 - player;
+                return;
+            } else if (this.counts[9] == 9) {
+                // all 9 small boards are filled
+                this.isGameOver = true;
+
+                // calculate score based on most boards won
+                if (this.score < 0) {
+                    this.score = 1;
+                } else if (this.score > 0) {
+                    this.score = 0;
+                } else {
+                    this.score = 0.5;
+                }
+
+                return;
+            }
+        } else if (this.counts[boardNr] == 9) {
+            // small board full; draw
+            this.drawBoard |= State.bitMove[boardNr];
+            this.counts[9]++;
+
+            if (this.counts[9] == 9) {
+                // all 9 small boards are filled
+                GameOver = true;
+
+                // calculate score based on most boards won
+                if (this.score < 0) {
+                    this.score = 1;
+                } else if (this.score > 0) {
+                    this.score = 0;
+                } else {
+                    this.score = 0.5;
+                }
+
+                return;
+            }
+        }
+
+        // if next board is full or won; next player can choose board
+        if (this.counts[this.nextBoardNr] == 9 || (this.__getMergedBoard(9) & State.bitMove[this.nextBoardNr]) != 0) {
+            this.nextBoardNr = 9;
+        }
 
         this.roundNr++;
-
-        if (this.roundNr >= 81) {
-            this.isGameOver = true;
-        }
+        this.history.push(move);
     }
 
     isValid(move) {
-        return move >= 0 && move < 81 && this.board[move] == -1;
+        // check for out of bounds
+        if (move < 0 && move >= 81) {
+            return false;
+        }
+
+        // check if player is allowed to play on this board
+        const boardNr = Math.floor(move / 9);
+        if (this.nextBoardNr != 9 && boardNr != this.nextBoardNr) {
+            return false;
+        }
+
+        // check if location on board is empty
+        const moveNr = move % 9;
+        if ((this.__getMergedBoard(boardNr) & State.bitMove[moveNr]) != 0) {
+            return false;
+        }
+
+        return true;
     }
 
     getValidMoves() {
-        const moves = [];
-        for (let i = 0; i < 81; i++) {
-            if (this.board[i] === -1) {
-                moves.push(i);
-            }
+        if (this.nextBoardNr == 9) {
+            const possibleBoardNrs = State.moves[0][__getMergedBoard(this.nextBoardNr)];
+            return possibleBoardNrs
+                .map(function (boardNr) {
+                    return State.moves[boardNr, this.__getMergedBoard(boardNr)];
+                })
+                .reduce(function (a, b) {
+                    return a.concat(b);
+                });
         }
-        return moves;
+        return State.moves[this.nextBoardNr, this.__getMergedBoard(this.nextBoardNr)];
     }
 
     getPlayerToMove() {
         return this.roundNr & 1;
     }
 
-    get2DBoard() {
-        const board2D = Array(9).fill(Array(9));
-        for (let i = 0; i < 81; i++) {
-            board2D[i % 9][Math.floor(i / 9)] = this.board[i];
+    getCellValue(i, j) {
+        const move = Math.floor(j / 3) * 27 + j * 3 + (i % 3) * 9 + i;
+        const boardNr = Math.floor(move / 9);
+        const moveNr = move % 9;
+
+        if ((this.bitBoards[0][boardNr] & (1 << boardNr)) != 0) {
+            return 0;
+        } else if ((this.bitBoards[1][boardNr] & (1 << boardNr)) != 0) {
+            return 1;
         }
-        return board2D;
+        return undefined;
+    }
+
+    getBoardValue(i, j) {
+        const boardNr = j * 3 + i;
+        if ((this.bitBoards[0][9] & (1 << boardNr)) != 0) {
+            return 0;
+        } else if ((this.bitBoards[1][9] & (1 << boardNr)) != 0) {
+            return 1;
+        } else if ((this.drawBoard & (1 << boardNr)) != 0) {
+            return 0.5;
+        }
+        return undefined;
     }
 
     clone() {
@@ -58,10 +153,59 @@ class State {
     }
 
     copyPosition(state) {
-        this.board = state.board.slice();
+        this.bitBoards = [Array(10), Array(10)];
+        this.counts = Array(10);
+        for (let i = 0; i < 10; i++) {
+            this.counts[i] = state.counts[i];
+            this.bitBoards[0][i] = state.bitBoards[0][i];
+            this.bitBoards[1][i] = state.bitBoards[1][i];
+        }
         this.roundNr = state.roundNr;
+        this.nextBoardNr = state.nextBoardNr;
+        this.drawBoard = state.drawBoard;
         this.score = state.score;
         this.gameOver = state.gameOver;
         this.history = state.history.slice();
     }
+
+    __isLine(bitBoard) {
+        return (bitBoard & (bitBoard >> 1) & (bitBoard >> 2) & State.lineFilter) != 0;
+    }
+
+    __getMergedBoard(boardNr) {
+        if (boardNr == 9) {
+            return (this.bitBoards[0][boardNr] | this.bitBoards[1][boardNr] | this.drawBitBoard) & 0b111111111;
+        }
+        return (this.bitBoards[0][boardNr] | this.bitBoards[1, boardNr]) & 0b111111111;
+    }
+}
+
+State.bitMove = [
+    0b000001000000001000000001,
+    0b000000000001000000000010,
+    0b001000001000000000000100,
+    0b000000000000010000001000,
+    0b010010000010000000010000,
+    0b000000010000000000100000,
+    0b100000000000100001000000,
+    0b000000000100000010000000,
+    0b000100100000000100000000
+];
+
+State.lineFilter = 0b001001001001001001001001;
+
+State.moves = [];
+
+for (let b = 0; b < 9; b++) {
+    let movesForBoard = [];
+    for (let i = 0; i < 0b1000000000; i++) {
+        let movesForPosition = [];
+        for (let x = 0; x < 9; x++) {
+            if ((i & (1 << x)) == 0) {
+                movesForPosition.push(b * 9 + x);
+            }
+        }
+        movesForBoard.push(movesForPosition);
+    }
+    State.moves.push(movesForBoard);
 }

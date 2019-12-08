@@ -67,8 +67,8 @@ function mousePressed() {
         if (player && player.constructor.name === 'HumanPlayer') {
             let x = Math.floor(mouseX / (width / 9));
             let y = Math.floor(mouseY / (height / 9));
-            let move = y * 9 + x;
             if (x >= 0 && x < 9 && y >= 0 && y < 9) {
+                let move = Math.floor(y / 3) * 27 + (y % 3) * 3 + Math.floor(x / 3) * 9 + x % 3;
                 if (!state.isValid(move)) {
                     console.log('Invalid Move!');
                     return;
