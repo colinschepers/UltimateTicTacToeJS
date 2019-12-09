@@ -10,7 +10,7 @@ const frameCoverage = 0.90
 const frameAnimationSpeed = 1;
 
 // symbols
-const symbolSize = gridSize * 0.7;
+const symbolSize = gridSize * 0.79;
 const symbolAnimationSpeed = 0.1;
 const crossThickness = 0.15;
 const circleThickness = 0.3;
@@ -21,4 +21,4 @@ const menuItemSize = 0.9;
 const menuAnimationSpeed = 10;
 
 // game logic
-const moveTimeInMilliseconds = 100;
+const moveTimeInMilliseconds = 1000;

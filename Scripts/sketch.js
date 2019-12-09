@@ -38,6 +38,7 @@ function getMove() {
         try {
             const scriptName = player.constructor.name[0].toUpperCase() + player.constructor.name.slice(1);
             const worker = new Worker(`Scripts/${scriptName}.js`);
+
             worker.onmessage = function (messageEvent) {
                 applyMove(messageEvent.data[0], startTime);
             }

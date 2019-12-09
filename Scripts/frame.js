@@ -19,10 +19,10 @@ class FrameElement {
         fill(this.r, this.g, this.b, this.a);
         rect(this.x, this.y, this.width, this.height);
 
-        if(!this.isVisible) {
+        if (!this.isVisible) {
             this.a = max(0, this.a - frameAnimationSpeed * 10);
-        } else if(this.isDimmed) {
-            this.a = max(100, this.a - frameAnimationSpeed * 10);
+        } else if (this.isDimmed) {
+            this.a = max(50, this.a - frameAnimationSpeed * 10);
         } else {
             this.a = min(255, this.a + frameAnimationSpeed * 10);
         }
@@ -67,12 +67,10 @@ function createLargeFrameElements() {
     return elements;
 }
 
-var xxx = 10;
-
 function createSmallFrameElements() {
     const elements = Array(9);
     for (let boardNr = 0; boardNr < 9; boardNr++) {
-        const elementsForBoard = [] 
+        const elementsForBoard = []
         let i = boardNr % 3;
         let j = Math.floor(boardNr / 3);
         for (k = 1; k < 3; k++) {
@@ -91,19 +89,23 @@ function createSmallFrameElements() {
 }
 
 function updateSmallFrameElements() {
-    if(!state.history || state.history.length === 0) {
+    if (!state.history || state.history.length === 0) {
         return;
     }
-    
+
     const move = state.history[state.history.length - 1];
     const boardNr = Math.floor(move / 9);
     const boardValue = state.getBoardValue(boardNr);
 
+    if (boardValue !== undefined) {
+        for (k = 0; k < 4; k++) {
+            frameSmallElements[boardNr][k].isVisible = false;
+        }
+    }
+
     for (let i = 0; i < 9; i++) {
         for (k = 0; k < 4; k++) {
-            element = frameSmallElements[i][k];
-            element.isVisible = boardValue === undefined;
-            element.isDimmed = state.nextBoardNr !== i;
+            frameSmallElements[i][k].isDimmed = state.nextBoardNr != 9 && state.nextBoardNr !== i;
         }
     }
 }

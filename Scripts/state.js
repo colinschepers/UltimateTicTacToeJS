@@ -5,7 +5,7 @@ class State {
         this.counts = Array(10).fill(0);
         this.nextBoardNr = 9;
         this.drawBitBoard = 0;
-        this.score = 0.5;
+        this.score = 0;
         this.isGameOver = false;
         this.history = [];
     }
@@ -35,8 +35,7 @@ class State {
                 // line on the large board
                 this.isGameOver = true;
                 this.score = 1 - player;
-                return;
-            } else if (this.counts[9] == 9) {
+            } else if (this.counts[9] === 9) {
                 // all 9 small boards are filled
                 this.isGameOver = true;
 
@@ -48,17 +47,15 @@ class State {
                 } else {
                     this.score = 0.5;
                 }
-
-                return;
             }
         } else if (this.counts[boardNr] == 9) {
             // small board full; draw
             this.drawBoard |= State.bitMove[boardNr];
             this.counts[9]++;
 
-            if (this.counts[9] == 9) {
+            if (this.counts[9] === 9) {
                 // all 9 small boards are filled
-                GameOver = true;
+                this.isGameOver = true;
 
                 // calculate score based on most boards won
                 if (this.score < 0) {
@@ -68,13 +65,12 @@ class State {
                 } else {
                     this.score = 0.5;
                 }
-
-                return;
             }
         }
 
         // if next board is full or won; next player can choose board
-        if (this.counts[this.nextBoardNr] == 9 || (this.__getMergedBoard(9) & State.bitMove[this.nextBoardNr]) != 0) {
+        if (this.counts[this.nextBoardNr] === 9 ||
+            (this.__getMergedBoard(9) & State.bitMove[this.nextBoardNr]) != 0) {
             this.nextBoardNr = 9;
         }
 
@@ -123,15 +119,6 @@ class State {
         return this.roundNr & 1;
     }
 
-    getCellValue(boardNr, moveNr) {
-        if ((this.bitBoards[0][boardNr] & (1 << boardNr)) != 0) {
-            return 0;
-        } else if ((this.bitBoards[1][boardNr] & (1 << boardNr)) != 0) {
-            return 1;
-        }
-        return undefined;
-    }
-
     getBoardValue(boardNr) {
         if ((this.bitBoards[0][9] & (1 << boardNr)) != 0) {
             return 0;
@@ -173,7 +160,7 @@ class State {
         if (boardNr == 9) {
             return (this.bitBoards[0][boardNr] | this.bitBoards[1][boardNr] | this.drawBitBoard) & 0b111111111;
         }
-        return (this.bitBoards[0][boardNr] | this.bitBoards[1, boardNr]) & 0b111111111;
+        return (this.bitBoards[0][boardNr] | this.bitBoards[1][boardNr]) & 0b111111111;
     }
 }
 

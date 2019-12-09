@@ -18,25 +18,25 @@ class MenuItem {
 
     draw() {
         rectMode(CORNER);
+        textStyle(BOLD);
+
+        this.transparency = min(200, this.transparency + menuAnimationSpeed);
+
+        if (mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height) {
+            this.size = menuFontSize * 1.06;
+            this.textColor = 200 + (55 * sin(frameCount / 15));
+        } else {
+            this.size = menuFontSize;
+            this.textColor = 145;
+        }
 
         fill(this.backgroundColor, this.transparency);
         rect(this.x, this.y, this.width, this.height);
 
         fill(this.textColor, this.transparency);
-        textStyle(BOLD);
         textAlign(CENTER, TOP);
         textSize(this.size);
         text(this.text, this.x, this.y, this.width, this.height);
-
-        this.transparency = min(200, this.transparency + menuAnimationSpeed);
-
-        if (mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height) {
-            this.size = menuFontSize * 1.05;
-            this.textColor = 200 + (50 * sin(frameCount / 10));
-        } else {
-            this.size = menuFontSize;
-            this.textColor = 150;
-        }
     }
 }
 

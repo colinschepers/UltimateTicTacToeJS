@@ -4,7 +4,7 @@ const UCT_C = Math.sqrt(2);
 onmessage = function (messageEvent) {
     importScripts("State.js");
     let state = new State();
-    
+
     state.bitBoards = [Array(10), Array(10)];
     state.counts = Array(10);
     for (let i = 0; i < 10; i++) {
@@ -15,7 +15,7 @@ onmessage = function (messageEvent) {
     state.roundNr = messageEvent.data[0].board;
     state.nextBoardNr = messageEvent.data[0].nextBoardNr;
     state.drawBoard = messageEvent.data[0].drawBoard;
-    state.score = stmessageEvent.data[0].score;
+    state.score = messageEvent.data[0].score;
     state.gameOver = messageEvent.data[0].gameOver;
     state.history = messageEvent.data[0].history.slice();
 
