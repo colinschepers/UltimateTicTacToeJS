@@ -36,7 +36,7 @@ function getMove() {
     if (state && player && player.constructor.name != 'HumanPlayer') {
         let startTime = Date.now();
         try {
-            const scriptName = player.constructor.name[0].toUpperCase() + player.constructor.name.slice(1);
+            const scriptName = player.constructor.name[0].toLowerCase() + player.constructor.name.slice(1);
             const worker = new Worker(`Scripts/${scriptName}.js`);
 
             worker.onmessage = function (messageEvent) {
