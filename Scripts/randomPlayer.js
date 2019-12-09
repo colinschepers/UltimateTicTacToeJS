@@ -10,11 +10,11 @@ onmessage = function (messageEvent) {
         state.bitBoards[0][i] = messageEvent.data[0].bitBoards[0][i];
         state.bitBoards[1][i] = messageEvent.data[0].bitBoards[1][i];
     }
-    state.roundNr = messageEvent.data[0].board;
+    state.roundNr = messageEvent.data[0].roundNr;
     state.nextBoardNr = messageEvent.data[0].nextBoardNr;
-    state.drawBoard = messageEvent.data[0].drawBoard;
+    state.drawBitBoard = messageEvent.data[0].drawBitBoard;
     state.score = messageEvent.data[0].score;
-    state.gameOver = messageEvent.data[0].gameOver;
+    state.isGameOver = messageEvent.data[0].isGameOver;
     state.history = messageEvent.data[0].history.slice();
 
     let randomPlayer = new RandomPlayer();

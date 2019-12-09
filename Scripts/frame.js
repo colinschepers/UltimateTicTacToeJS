@@ -22,7 +22,7 @@ class FrameElement {
         if (!this.isVisible) {
             this.a = max(0, this.a - frameAnimationSpeed * 10);
         } else if (this.isDimmed) {
-            this.a = max(50, this.a - frameAnimationSpeed * 10);
+            this.a = max(80, this.a - frameAnimationSpeed * 10);
         } else {
             this.a = min(255, this.a + frameAnimationSpeed * 10);
         }

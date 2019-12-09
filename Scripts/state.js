@@ -50,7 +50,7 @@ class State {
             }
         } else if (this.counts[boardNr] == 9) {
             // small board full; draw
-            this.drawBoard |= State.bitMove[boardNr];
+            this.drawBitBoard |= State.bitMove[boardNr];
             this.counts[9]++;
 
             if (this.counts[9] === 9) {
@@ -124,7 +124,7 @@ class State {
             return 0;
         } else if ((this.bitBoards[1][9] & (1 << boardNr)) != 0) {
             return 1;
-        } else if ((this.drawBoard & (1 << boardNr)) != 0) {
+        } else if ((this.drawBitBoard & (1 << boardNr)) != 0) {
             return 0.5;
         }
         return undefined;
@@ -146,9 +146,9 @@ class State {
         }
         this.roundNr = state.roundNr;
         this.nextBoardNr = state.nextBoardNr;
-        this.drawBoard = state.drawBoard;
+        this.drawBitBoard = state.drawBitBoard;
         this.score = state.score;
-        this.gameOver = state.gameOver;
+        this.isGameOver = state.isGameOver;
         this.history = state.history.slice();
     }
 

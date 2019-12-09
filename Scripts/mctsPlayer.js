@@ -12,11 +12,11 @@ onmessage = function (messageEvent) {
         state.bitBoards[0][i] = messageEvent.data[0].bitBoards[0][i];
         state.bitBoards[1][i] = messageEvent.data[0].bitBoards[1][i];
     }
-    state.roundNr = messageEvent.data[0].board;
+    state.roundNr = messageEvent.data[0].roundNr;
     state.nextBoardNr = messageEvent.data[0].nextBoardNr;
-    state.drawBoard = messageEvent.data[0].drawBoard;
+    state.drawBitBoard = messageEvent.data[0].drawBitBoard;
     state.score = messageEvent.data[0].score;
-    state.gameOver = messageEvent.data[0].gameOver;
+    state.isGameOver = messageEvent.data[0].isGameOver;
     state.history = messageEvent.data[0].history.slice();
 
     let runningTimeInMilliseconds = messageEvent.data[1];
@@ -35,7 +35,7 @@ class MCTSNode {
         this.visits = 0;
         this.playerToMove = state.getPlayerToMove();
         this.isTerminal = state.isGameOver;
-        this.untriedMoves = state.isGameOver ? [] : state.getValidMoves();
+        this.untriedMoves = state.isGameOver ? [] : state.getValidMoves().slice();
     }
 }
 
@@ -58,7 +58,7 @@ class MCTSPlayer {
             this.__backtrack(node, state);
         }
 
-        //console.log('Iterations: ' + root.visits);
+        console.log('Iterations: ' + root.visits);
         //console.log(root);
 
         let bestMove = this.__getRandomMove(initialState);
@@ -99,7 +99,7 @@ class MCTSPlayer {
             state.play(node.move);
         }
 
-        // console.log('Selection: ' + selectedMoves.join(' '));
+        //console.log('Selection: ' + selectedMoves.join(' '));
 
         return node;
     }
@@ -111,6 +111,7 @@ class MCTSPlayer {
 
             let newChild = new MCTSNode(node, move, state);
             node.children.push(newChild);
+
             //console.log('Expanded move: ' + newChild.move + ' | untriedMoves: ' + newChild.untriedMoves);
 
             return newChild;

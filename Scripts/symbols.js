@@ -32,7 +32,7 @@ class GameSymbol {
         if (!this.isVisible) {
             this.a = max(0, this.a - this.animationSpeed * 100);
         } else if (this.isDimmed) {
-            this.a = max(50, this.a - this.animationSpeed * 100);
+            this.a = max(80, this.a - this.animationSpeed * 100);
         } else {
             this.a = min(255, this.a + this.animationSpeed * 100);
         }
