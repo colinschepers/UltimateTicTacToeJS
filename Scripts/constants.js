@@ -5,8 +5,8 @@ const gridSizeXL = size / 3;
 
 // frame
 const frameThickness = size / 100;
-const frameCoverageXL = 0.95
-const frameCoverage = 0.90
+const frameCoverageXL = 0.98;
+const frameCoverage = 0.90;
 const frameAnimationSpeed = 1;
 
 // symbols
@@ -21,4 +21,4 @@ const menuItemSize = 0.9;
 const menuAnimationSpeed = 10;
 
 // game logic
-const moveTimeInMilliseconds = 1000;
+const moveTimeInMilliseconds = 50;
