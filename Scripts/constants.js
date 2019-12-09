@@ -21,4 +21,4 @@ const menuItemSize = 0.9;
 const menuAnimationSpeed = 10;
 
 // game logic
-const moveTimeInMilliseconds = 1000;
+const moveTimeInMilliseconds = 500;

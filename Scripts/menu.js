@@ -74,7 +74,7 @@ function initMenu1() {
 }
 
 function initMenu2() {
-    let newPlayers = [new HumanPlayer(), new RandomPlayer(), new MCTSPlayer()];
+    let newPlayers = [new HumanPlayer(), new RandomPlayer(), new MctsPlayer()];
     for (let i = 0; i < 9; i++) {
         let txt = '\n\n' + newPlayers[i % 3].constructor.name.replace('Player', '') + '\nvs\n' +
             newPlayers[Math.floor(i / 3)].constructor.name.replace('Player', '') + '\n';
