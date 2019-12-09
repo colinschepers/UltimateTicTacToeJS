@@ -2,20 +2,30 @@ var frameLargeElements = null;
 var frameSmallElements = null;
 
 class FrameElement {
-    constructor(x, y, width, height, r, g, b, a) {
+    constructor(x, y, width, height, r, g, b) {
         this.x = x;
         this.y = y;
+        this.width = width;
+        this.height = height;
         this.r = r;
         this.g = g;
         this.b = b;
-        this.a = a;
-        this.width = width;
-        this.height = height;
+        this.a = 255;
+        this.isVisible = true;
+        this.isDimmed = false;
     }
 
     draw() {
         fill(this.r, this.g, this.b, this.a);
         rect(this.x, this.y, this.width, this.height);
+
+        if(!this.isVisible) {
+            this.a = max(0, this.a - frameAnimationSpeed * 10);
+        } else if(this.isDimmed) {
+            this.a = max(100, this.a - frameAnimationSpeed * 10);
+        } else {
+            this.a = min(255, this.a + frameAnimationSpeed * 10);
+        }
     }
 }
 
@@ -23,7 +33,7 @@ function drawFrame() {
     if (!frameLargeElements) {
         frameLargeElements = createLargeFrameElements();
     }
-    if (!frameSmallElements || (state && state.roundNr == 0 && frameSmallElements.length < 36)) {
+    if (!frameSmallElements || (state && state.roundNr == 0)) {
         frameSmallElements = createSmallFrameElements();
     }
 
@@ -32,11 +42,15 @@ function drawFrame() {
     }
 
     rectMode(CORNER);
+
     for (let frameElement of frameLargeElements) {
         frameElement.draw();
     }
-    for (let frameElement of frameSmallElements) {
-        frameElement.draw();
+
+    for (let boardNr = 0; boardNr < 9; boardNr++) {
+        for (let frameElement of frameSmallElements[boardNr]) {
+            frameElement.draw();
+        }
     }
 }
 
@@ -53,32 +67,43 @@ function createLargeFrameElements() {
     return elements;
 }
 
+var xxx = 10;
+
 function createSmallFrameElements() {
-    const elements = [];
-    for (j = 0; j < 3; j++) {
-        for (i = 0; i < 3; i++) {
-            for (k = 1; k < 3; k++) {
-                let x = i * gridSizeXL + k * gridSize - frameThickness / 2;
-                let y = j * gridSizeXL + gridSizeXL * ((1 - frameCoverage) / 2);
-                let w = frameThickness;
-                let h = gridSizeXL * frameCoverage;
-                elements.push(new FrameElement(x, y, w, h, 0, 150, 200, 255));
-                elements.push(new FrameElement(y, x, h, w, 0, 150, 200, 255));
-            }
+    const elements = Array(9);
+    for (let boardNr = 0; boardNr < 9; boardNr++) {
+        const elementsForBoard = [] 
+        let i = boardNr % 3;
+        let j = Math.floor(boardNr / 3);
+        for (k = 1; k < 3; k++) {
+            let x = i * gridSizeXL + k * gridSize - frameThickness / 2;
+            let y = j * gridSizeXL + gridSizeXL * ((1 - frameCoverage) / 2);
+            elementsForBoard.push(new FrameElement(x, y, frameThickness, gridSizeXL * frameCoverage, 0, 150, 200));
         }
+        for (k = 1; k < 3; k++) {
+            let x = i * gridSizeXL + gridSizeXL * ((1 - frameCoverage) / 2);
+            let y = j * gridSizeXL + k * gridSize - frameThickness / 2;
+            elementsForBoard.push(new FrameElement(x, y, gridSizeXL * frameCoverage, frameThickness, 0, 150, 200));
+        }
+        elements[boardNr] = elementsForBoard;
     }
     return elements;
 }
 
 function updateSmallFrameElements() {
-    for (j = 0; j < 3; j++) {
-        for (i = 0; i < 3; i++) {
-            if (state.getBoardValue(i, j) !== undefined) {
-                for (k = 0; k < 4; k++) {
-                    element = frameSmallElements[(j * 3 + i) * 4 + k];
-                    element.a = max(0, element.a - (200 / frameAnimationSpeed));
-                }
-            }
+    if(!state.history || state.history.length === 0) {
+        return;
+    }
+    
+    const move = state.history[state.history.length - 1];
+    const boardNr = Math.floor(move / 9);
+    const boardValue = state.getBoardValue(boardNr);
+
+    for (let i = 0; i < 9; i++) {
+        for (k = 0; k < 4; k++) {
+            element = frameSmallElements[i][k];
+            element.isVisible = boardValue === undefined;
+            element.isDimmed = state.nextBoardNr !== i;
         }
     }
 }

@@ -104,28 +104,26 @@ class State {
     }
 
     getValidMoves() {
+        let mergedBoard = this.__getMergedBoard(this.nextBoardNr);
+
         if (this.nextBoardNr == 9) {
-            const possibleBoardNrs = State.moves[0][__getMergedBoard(this.nextBoardNr)];
-            return possibleBoardNrs
-                .map(function (boardNr) {
-                    return State.moves[boardNr, this.__getMergedBoard(boardNr)];
-                })
-                .reduce(function (a, b) {
-                    return a.concat(b);
-                });
+            let moves = [];
+            const possibleBoardNrs = State.moves[0][mergedBoard];
+            for (let boardNr of possibleBoardNrs) {
+                mergedBoard = this.__getMergedBoard(boardNr);
+                moves = moves.concat(State.moves[boardNr][mergedBoard]);
+            }
+            return moves;
         }
-        return State.moves[this.nextBoardNr, this.__getMergedBoard(this.nextBoardNr)];
+
+        return State.moves[this.nextBoardNr][mergedBoard];
     }
 
     getPlayerToMove() {
         return this.roundNr & 1;
     }
 
-    getCellValue(i, j) {
-        const move = Math.floor(j / 3) * 27 + j * 3 + (i % 3) * 9 + i;
-        const boardNr = Math.floor(move / 9);
-        const moveNr = move % 9;
-
+    getCellValue(boardNr, moveNr) {
         if ((this.bitBoards[0][boardNr] & (1 << boardNr)) != 0) {
             return 0;
         } else if ((this.bitBoards[1][boardNr] & (1 << boardNr)) != 0) {
@@ -134,8 +132,7 @@ class State {
         return undefined;
     }
 
-    getBoardValue(i, j) {
-        const boardNr = j * 3 + i;
+    getBoardValue(boardNr) {
         if ((this.bitBoards[0][9] & (1 << boardNr)) != 0) {
             return 0;
         } else if ((this.bitBoards[1][9] & (1 << boardNr)) != 0) {

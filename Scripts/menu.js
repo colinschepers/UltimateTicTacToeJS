@@ -9,6 +9,9 @@ class MenuItem {
         this.y = y;
         this.width = width;
         this.height = height;
+        this.backgroundColor = 15;
+        this.textColor = 150;
+        this.size = menuFontSize;
         this.onClicked = onClicked;
         this.transparency = 0;
     }
@@ -16,16 +19,24 @@ class MenuItem {
     draw() {
         rectMode(CORNER);
 
-        fill(15, this.transparency);
+        fill(this.backgroundColor, this.transparency);
         rect(this.x, this.y, this.width, this.height);
 
-        fill(150, this.transparency);
-        textSize(menuFontSize);
+        fill(this.textColor, this.transparency);
         textStyle(BOLD);
         textAlign(CENTER, TOP);
+        textSize(this.size);
         text(this.text, this.x, this.y, this.width, this.height);
 
-        this.transparency = min(200, this.transparency + (200 / menuAnimationSpeed));
+        this.transparency = min(200, this.transparency + menuAnimationSpeed);
+
+        if (mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height) {
+            this.size = menuFontSize * 1.05;
+            this.textColor = 200 + (50 * sin(frameCount / 10));
+        } else {
+            this.size = menuFontSize;
+            this.textColor = 150;
+        }
     }
 }
 

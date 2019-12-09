@@ -2,10 +2,21 @@
 onmessage = function (messageEvent) {
     importScripts("State.js");
     let state = new State();
-    state.bitBoards = messageEvent.data[0].bitBoards;
-    state.score = messageEvent.data[0].score;
-    state.roundNr = messageEvent.data[0].roundNr;
+    
+    state.bitBoards = [Array(10), Array(10)];
+    state.counts = Array(10);
+    for (let i = 0; i < 10; i++) {
+        state.counts[i] = messageEvent.data[0].counts[i];
+        state.bitBoards[0][i] = messageEvent.data[0].bitBoards[0][i];
+        state.bitBoards[1][i] = messageEvent.data[0].bitBoards[1][i];
+    }
+    state.roundNr = messageEvent.data[0].board;
+    state.nextBoardNr = messageEvent.data[0].nextBoardNr;
+    state.drawBoard = messageEvent.data[0].drawBoard;
+    state.score = stmessageEvent.data[0].score;
     state.gameOver = messageEvent.data[0].gameOver;
+    state.history = messageEvent.data[0].history.slice();
+
     let miniMaxPlayer = new MiniMaxPlayer(messageEvent.data[1]);
     let move = miniMaxPlayer.getMove(state);
     postMessage([move]);
