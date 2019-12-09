@@ -55,11 +55,9 @@ class Cross extends GameSymbol {
         rotate(this.rotation);
         scale(this.scale);
 
-        let halfWidth = this.size * crossThickness / 2;
-        let halfHeight = this.size / 2;
-        let firstDis = pythagorean(halfWidth);
-        let longDis = pythagorean_inv(halfHeight - halfWidth);
-        let shortDis = pythagorean_inv(this.size * crossThickness);
+        let firstDis = pythagorean(this.size * crossThickness / 2);
+        let longDis = (this.size / 2 - this.size * crossThickness / 2) / Math.sqrt(2);
+        let shortDis = (this.size * crossThickness) / Math.sqrt(2);
 
         beginShape();
         vertex(0, firstDis);
@@ -75,50 +73,6 @@ class Cross extends GameSymbol {
         vertex(-firstDis - longDis, firstDis + longDis - shortDis);
         vertex(-longDis, firstDis + longDis);
         endShape(CLOSE);
-
-        scale(1 / this.scale);
-        rotate(-this.rotation);
-        translate(-this.x, -this.y);
-    }
-
-    draw2() {
-        super.draw();
-
-        translate(this.x, this.y);
-        rotate(this.rotation);
-        scale(this.scale);
-
-        rotate(0.25 * PI);
-
-        rect(0, 0, this.size * crossThickness, this.size)
-        rotate(0.5 * PI);
-        rect(0, 0, this.size * crossThickness, this.size)
-        rotate(1.25 * PI);
-
-        scale(1 / this.scale);
-        rotate(-this.rotation);
-        translate(-this.x, -this.y);
-    }
-
-    draw3() {
-        super.draw();
-
-        translate(this.x, this.y);
-        rotate(this.rotation);
-        scale(this.scale);
-
-        rotate(0.25 * PI);
-
-        rect(0, 0, this.size * crossThickness, this.size)
-
-        let w = this.size / 2 - this.size * crossThickness / 2;
-        translate(w / 2 + this.size * crossThickness / 2, 0);
-        rect(0, 0, w, this.size * crossThickness)
-        translate(-w - this.size * crossThickness, 0);
-        rect(0, 0, w, this.size * crossThickness)
-        translate(w / 2 + this.size * crossThickness / 2, 0);
-
-        rotate(-0.25 * PI);
 
         scale(1 / this.scale);
         rotate(-this.rotation);
@@ -276,8 +230,4 @@ function updateSymbols() {
 
 function pythagorean(a) {
     return Math.sqrt(Math.pow(a, 2) + Math.pow(a, 2));
-}
-
-function pythagorean_inv(c) {
-    return c / Math.sqrt(2);
 }
