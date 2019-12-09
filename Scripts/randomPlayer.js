@@ -1,6 +1,6 @@
 // Allow for multi threading using webWorkers
 onmessage = function (messageEvent) {
-    importScripts("State.js");
+    importScripts("state.js");
     let state = new State();
 
     state.bitBoards = [Array(10), Array(10)];
