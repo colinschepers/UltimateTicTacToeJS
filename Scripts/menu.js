@@ -1,6 +1,6 @@
 const menuItems = [];
 const menuPlayerNames = ['Human', 'Easy', 'Medium', 'Hard', 'Godlike'];
-const menuPlayers = [new HumanPlayer(), new MCTSPlayer(1), new MCTSPlayer(5), new MCTSPlayer(200), new MCTSPlayer(1000)];
+const menuPlayers = [new HumanPlayer(), new MCTSPlayer(5), new MCTSPlayer(100), new MCTSPlayer(500), new MCTSPlayer(1500)];
 const menuSpeedNames = ['Instant', 'Fast', 'Normal', 'Slow', 'Slothlike'];
 const menuSpeeds = [1, 100, 300, 1000, 3000];
 
