@@ -19,6 +19,3 @@ const circleThickness = 0.3;
 const menuFontSize = 22;
 const menuItemSize = 0.9;
 const menuAnimationSpeed = 10;
-
-// game logic
-const moveTimeInMilliseconds = 500;
