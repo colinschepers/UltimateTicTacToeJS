@@ -16,6 +16,7 @@ const crossThickness = 0.15;
 const circleThickness = 0.3;
 
 // menu
-const menuFontSize = 22;
-const menuItemSize = 0.9;
+const menuFontSize = 18;
+const menuItemSizeX = 0.92;
+const menuItemSizeY = 0.85;
 const menuAnimationSpeed = 10;

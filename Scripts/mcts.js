@@ -30,7 +30,7 @@ function getMove(initialState, timeLimit) {
         backtrack(node, state);
     }
 
-    //console.log('Iterations: ' + root.visits);
+    console.log('Iterations: ' + root.visits);
     //console.log(root);
 
     let bestMove = getRandomMove(initialState);

@@ -1,114 +1,117 @@
-const menu1Items = [];
-const menu2Items = [];
-var menuShown = 0;
+const menuItems = [];
+const menuPlayerNames = ['Human', 'Easy', 'Medium', 'Hard', 'Godlike'];
+const menuPlayers = [new HumanPlayer(), new MCTSPlayer(1), new MCTSPlayer(5), new MCTSPlayer(200), new MCTSPlayer(1000)];
+const menuSpeedNames = ['Instant', 'Fast', 'Normal', 'Slow', 'Slothlike'];
+const menuSpeeds = [1, 100, 300, 1000, 3000];
+
+var menuShown = false;
+var menuPlayer1 = 0;
+var menuPlayer2 = 2;
+var menuSpeed = 0;
 
 class MenuItem {
-    constructor(text, x, y, width, height, onClicked) {
+    constructor(text, x, y, width, height, fontSize, backgroundColor, textColor, animate, onClicked) {
         this.text = text;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.backgroundColor = 15;
-        this.textColor = 150;
-        this.size = menuFontSize;
-        this.onClicked = onClicked;
+        this.fontSize = fontSize;
+        this.backgroundColor = backgroundColor;
+        this.textColor = textColor;
         this.transparency = 0;
+        this.animate = animate;
+        this.onClicked = onClicked;
     }
 
     draw() {
         rectMode(CORNER);
         textStyle(BOLD);
 
-        this.transparency = min(200, this.transparency + menuAnimationSpeed);
+        let fontSize = this.fontSize;
+        let textColor = this.textColor
 
-        if (mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height) {
-            this.size = menuFontSize * 1.06;
-            this.textColor = 200 + (55 * sin(frameCount / 15));
-        } else {
-            this.size = menuFontSize;
-            this.textColor = 145;
+        if (this.animate  && mouseX > this.x && mouseX < this.x + this.width && mouseY > this.y && mouseY < this.y + this.height) {
+            fontSize = this.fontSize * 1.1;
+            textColor = 200 + (55 * sin(frameCount / 15));
         }
+
+        this.transparency = min(200, this.transparency + menuAnimationSpeed);
 
         fill(this.backgroundColor, this.transparency);
         rect(this.x, this.y, this.width, this.height);
 
-        fill(this.textColor, this.transparency);
-        textAlign(CENTER, TOP);
-        textSize(this.size);
+        fill(textColor, this.transparency);
+        textSize(fontSize)
+        textAlign(CENTER, CENTER);
         text(this.text, this.x, this.y, this.width, this.height);
     }
 }
 
 function drawMenu() {
-    if (menu1Items.length === 0) {
-        initMenu1();
+    if (menuItems.length === 0) {
+        initMenu();
     }
-    if (menu2Items.length === 0) {
-        initMenu2();
-    }
-
     if (!state || state.isGameOver) {
-        if (menuShown == 0) {
-            menuShown = 1;
+        if(!menuShown && state) {
+            if(state && state.score === 1) {
+                menuItems[menuItems.length - 2].text++;
+            } else if (state && state.score === 0) {
+                menuItems[menuItems.length - 1].text++;
+            }
         }
-        for (let menuItem of getMenuItems()) {
+        for (let menuItem of menuItems) {
             menuItem.draw();
         }
+        menuShown = true;
     }
 }
 
-function initMenu1() {
-    let txt = '\nNew Game';
-    let w = gridSizeXL * menuItemSize;
-    let h = gridSizeXL * menuItemSize / 2.2;
+function initMenu() {
+    let w = gridSizeXL * menuItemSizeX;
+    let h = gridSizeXL * menuItemSizeY / 2;
     let x = size / 2 - w / 2;
-    let y = size / 2 - h / 2;
-    let onClicked = function () {
-        for (let menuItem of getMenuItems()) {
-            menuItem.transparency = 0;
-        }
-        menuShown = 2;
-    };
-    menu1Items.push(new MenuItem(txt, x, y, w, h, onClicked));
-}
+    let dy = gridSizeXL * (1 - menuItemSizeY) / 4;
 
-function initMenu2() {
-    let newPlayers = [new HumanPlayer(), new RandomPlayer(), new MCTSPlayer()];
-    for (let i = 0; i < 9; i++) {
-        let txt = '\n\n' + newPlayers[i % 3].constructor.name.replace('Player', '') + '\nvs\n' +
-            newPlayers[Math.floor(i / 3)].constructor.name.replace('Player', '') + '\n';
-        let w = gridSizeXL * menuItemSize;
-        let h = gridSizeXL * menuItemSize;
-        let x = (i % 3 + 0.5) * gridSizeXL - w / 2;
-        let y = (Math.floor(i / 3) + 0.5) * gridSizeXL - h / 2;
-        let onClicked = function () {
-            players[0] = newPlayers[i % 3];
-            players[1] = newPlayers[Math.floor(i / 3)];
-            newGame();
-            for (let menuItem of getMenuItems()) {
+    menuItems.push(new MenuItem('New Game', x, gridSizeXL * 0.5 + dy, w, h, 
+        menuFontSize, 15, 145, true, function () {
+            for (let menuItem of menuItems) {
                 menuItem.transparency = 0;
             }
-            menuShown = 0;
-        };
-        menu2Items.push(new MenuItem(txt, x, y, w, h, onClicked));
-    }
-}
-
-function getMenuItems() {
-    if (menuShown == 1) {
-        return menu1Items;
-    } else if (menuShown == 2) {
-        return menu2Items;
-    }
-    return [];
-}
+            menuShown = false;
+            players[0] = menuPlayers[menuPlayer1];
+            players[1] = menuPlayers[menuPlayer2];
+            moveDelay = menuSpeeds[menuSpeed];
+            newGame();
+        }));
+    menuItems.push(new MenuItem('Cross: ' + menuPlayerNames[menuPlayer1], x, gridSizeXL * 1 + dy, w, h, 
+        menuFontSize, 15, 145, true, function () {
+            menuPlayer1 = (menuPlayer1 + 1) % menuPlayerNames.length;
+            this.text = 'Cross: ' + menuPlayerNames[menuPlayer1]
+        }));
+    menuItems.push(new MenuItem('Circle: ' + menuPlayerNames[menuPlayer2], x, gridSizeXL * 1.5 + dy, w, h, 
+        menuFontSize, 15, 145, true, function () {
+            menuPlayer2 = (menuPlayer2 + 1) % menuPlayerNames.length;
+            this.text = 'Circle: ' + menuPlayerNames[menuPlayer2];
+        }));
+    menuItems.push(new MenuItem('Speed: ' + menuSpeedNames[menuSpeed], x, gridSizeXL * 2 + dy, w, h, 
+        menuFontSize, 15, 145, true, function () {
+            menuSpeed = (menuSpeed + 1) % menuSpeedNames.length;
+            this.text = 'Speed: ' + menuSpeedNames[menuSpeed];
+        }));
+    menuItems.push(new MenuItem(0, x - gridSizeXL, gridSizeXL + dy, w, gridSizeXL - dy * 2,
+        menuFontSize * 3, 50, 255, false, function () {}));
+    menuItems.push(new MenuItem(0, x + gridSizeXL, gridSizeXL + dy, w, gridSizeXL - dy * 2,
+        menuFontSize * 3, 50, 255, false, function () {}));
+} 
 
 function checkMenuItemsClicked() {
-    for (let menuItem of getMenuItems()) {
-        if (mouseX > menuItem.x && mouseX < menuItem.x + menuItem.width &&
-            mouseY > menuItem.y && mouseY < menuItem.y + menuItem.height) {
-            menuItem.onClicked();
+    if(menuShown) {
+        for (let menuItem of menuItems) {
+            if (mouseX > menuItem.x && mouseX < menuItem.x + menuItem.width &&
+                mouseY > menuItem.y && mouseY < menuItem.y + menuItem.height) {
+                menuItem.onClicked();
+            }
         }
     }
 }

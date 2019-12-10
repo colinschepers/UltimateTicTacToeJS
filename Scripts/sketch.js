@@ -3,12 +3,10 @@ var state = null;
 var awaitingMove = false;
 var menuEnabled = true;
 var startTime = Date.now();
-var moveTimeLimit = 10;
-var moveDelay = 10;
+var moveDelay = 100;
 
 function setup() {
     createCanvas(size, size);
-    frameRate(50);
     //newGame();
 }
 
@@ -32,13 +30,13 @@ function checkState() {
         awaitingMove = true;
         let player = players[state.getPlayerToMove()];
         if (player && player.constructor.name !== 'HumanPlayer') { 
-            player.getMove(state, moveTimeLimit, applyMove);
+            player.getMove(state, applyMove);
         }
     }
 }
 
 function applyMove(move) {
-    let timeLeft = moveTimeLimit - (Date.now() - startTime);
+    let timeLeft = moveDelay - (Date.now() - startTime);
     setTimeout(function () {
         try { 
             state.play(move);
@@ -53,7 +51,7 @@ function checkHumanPlayersClicked() {
     if (state && !state.isGameOver) {
         const player = players[state.getPlayerToMove()];
         if (player && player.constructor.name === 'HumanPlayer') { 
-            player.getMove(state, moveTimeLimit, applyMove);
+            player.getMove(state, applyMove);
         }
     }
 }

@@ -1,5 +1,5 @@
 class HumanPlayer {
-    getMove(state, timeLimit, callback) {
+    getMove(state, callback) {
         let x = Math.floor(mouseX / (width / 9));
         let y = Math.floor(mouseY / (height / 9));
         if (x >= 0 && x < 9 && y >= 0 && y < 9) {
