@@ -103,9 +103,9 @@ function updateSmallFrameElements() {
         }
     }
 
-    for (let i = 0; i < 9; i++) {
+    for (let b = 0; b < 9; b++) {
         for (k = 0; k < 4; k++) {
-            frameSmallElements[i][k].isDimmed = state.nextBoardNr != 9 && state.nextBoardNr !== i;
+            frameSmallElements[b][k].isDimmed = state.nextBoardNr != 9 && state.nextBoardNr !== b;
         }
     }
 }

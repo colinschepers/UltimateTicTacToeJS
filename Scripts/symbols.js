@@ -179,7 +179,7 @@ function updateSymbols() {
     for (let b = 0; b < 9; b++) {
         for (let m = 0; m < 9; m++) {
             if (symbols[b][m]) {
-                symbols[b][m].isDimmed = state.nextBoardNr !== b;
+                symbols[b][m].isDimmed = state.nextBoardNr != 9 && state.nextBoardNr !== b;
             }
         }
     }
