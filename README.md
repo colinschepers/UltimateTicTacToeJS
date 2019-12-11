@@ -1,8 +1,8 @@
-<a href="https://colinschepers.github.io/UltimateTicTacToeJS"><img align="right" src="./Images/game.gif" alt="" title="Ultimate tic-tac-toe is awesome!" width="240"/></a>
+<a href="https://colinschepers.github.io/UltimateTicTacToeJS"><img align="right" src="./Images/game.gif" alt="" title="Ultimate tic-tac-toe is awesome!" width="220"/></a>
 
 # UltimateTicTacToeJS
 
-Ultimate Tic-tac-toe is a variant on the famous tic-tac-toe game. Creating one line of three symbols is not enough now! This is a typical  game that is simple to play yet difficult to master. Try to beat the AI and enjoy the awesome animation effects. **Click the image to play the game.**
+Ultimate Tic-tac-toe is a variant on the famous tic-tac-toe game. Creating one line of three symbols is not enough now! This is a  game that is simple to play yet difficult to master. Try to beat the AI and enjoy the awesome animation effects. **Click the image to play the game.**
 
 ## Rules of the game
 
