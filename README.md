@@ -1,4 +1,4 @@
-<a href="https://colinschepers.github.io/UltimateTicTacToeJS"><img align="right" src="./Images/game.gif" alt="" title="Ultimate tic-tac-toe is awesome!" width="220"/></a>
+<a href="https://colinschepers.github.io/UltimateTicTacToeJS"><img align="right" src="./Images/game.gif" alt="" title="Ultimate tic-tac-toe is awesome!" width="240"/></a>
 
 # UltimateTicTacToeJS
 
